@@ -1,0 +1,6 @@
+{
+  "name": "Match-3 Puzzle Game",
+  "description": "3つ以上の同じ色のブロックを揃えて消す、シンプルで爽快なパズルゲームです。コンボを繋げると得られるスコア倍率がアップします。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

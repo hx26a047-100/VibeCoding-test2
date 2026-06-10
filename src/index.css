@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,700;1,6..96,400&family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Bodoni Moda', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* Custom background animation */
+@keyframes bgPulse {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.animate-bg-gradient {
+  background-size: 200% 200%;
+  animation: bgPulse 15s ease infinite;
+}
+
+/* Floating scores animation */
+@keyframes floatUp {
+  0% { transform: translate(-50%, 0) scale(0.8); opacity: 0; }
+  20% { transform: translate(-50%, -15px) scale(1.15); opacity: 1; }
+  100% { transform: translate(-50%, -50px) scale(0.9); opacity: 0; }
+}
+
+.animate-float-up {
+  animation: floatUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Pulse highlight for combo triggers */
+@keyframes comboPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); filter: brightness(1.2); }
+  100% { transform: scale(1); }
+}
+
+.animate-combo-pulse {
+  animation: comboPulse 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+
