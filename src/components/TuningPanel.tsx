@@ -6,15 +6,17 @@ import audio from '../utils/audio';
 interface TuningPanelProps {
   setting: MultiplierSetting;
   onChange: (newSetting: MultiplierSetting) => void;
+  disabled?: boolean;
 }
 
-export default function TuningPanel({ setting, onChange }: TuningPanelProps) {
+export default function TuningPanel({ setting, onChange, disabled = false }: TuningPanelProps) {
   const getMultiplier = (combo: number, coeff: number) => {
     if (combo <= 1) return 1.0;
     return 1.0 + (combo - 1) * coeff;
   };
 
   const handlePresetSelect = (presetType: 'linear' | 'steep' | 'fever' | 'custom') => {
+    if (disabled) return;
     audio.playSelect();
     let coeff = 0.5;
     if (presetType === 'linear') coeff = 0.5;
@@ -26,6 +28,7 @@ export default function TuningPanel({ setting, onChange }: TuningPanelProps) {
   };
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (disabled) return;
     const val = parseFloat(e.target.value);
     onChange({ type: 'custom', coefficient: val });
   };
@@ -34,15 +37,22 @@ export default function TuningPanel({ setting, onChange }: TuningPanelProps) {
   const debugCombos = [1, 2, 3, 4, 5];
 
   return (
-    <div className="bg-[#0F0F0F]/90 backdrop-blur-md rounded-2xl border border-white/10 p-5 landscape:p-3.5 lg:landscape:p-5 shadow-2xl space-y-4 landscape:space-y-2 lg:landscape:space-y-4" id="tuning-panel">
-      <div className="flex items-center gap-2 border-b border-white/5 pb-2.5 landscape:pb-1.5 lg:landscape:pb-2.5">
-        <Sliders className="w-4 h-4 text-[#D4AF37]" />
-        <h3 className="font-display italic font-semibold text-[#D4AF37] text-base">
-          Combo Speed settings
-        </h3>
+    <div className={`bg-[#0F0F0F]/90 backdrop-blur-md rounded-2xl border border-white/10 p-5 landscape:p-3.5 lg:landscape:p-5 shadow-2xl space-y-4 landscape:space-y-2 lg:landscape:space-y-4 transition-all duration-300 ${disabled ? 'opacity-60' : ''}`} id="tuning-panel">
+      <div className="flex items-center justify-between border-b border-white/5 pb-2.5 landscape:pb-1.5 lg:landscape:pb-2.5">
+        <div className="flex items-center gap-2">
+          <Sliders className="w-4 h-4 text-[#D4AF37]" />
+          <h3 className="font-display italic font-semibold text-[#D4AF37] text-base">
+            Combo Speed settings
+          </h3>
+        </div>
+        {disabled && (
+          <span className="text-[10px] bg-red-500/10 border border-red-500/20 text-red-400 px-2 py-0.5 rounded-md font-sans">
+            プレイ中変更不可
+          </span>
+        )}
       </div>
 
-      <div className="space-y-4">
+      <div className={`space-y-4 ${disabled ? 'pointer-events-none select-none' : ''}`}>
         {/* Preset Selector */}
         <div>
           <label className="text-xs font-display italic text-zinc-400 block mb-2">Select speed growth rate</label>
@@ -69,12 +79,13 @@ export default function TuningPanel({ setting, onChange }: TuningPanelProps) {
                 <button
                   key={type}
                   type="button"
+                  disabled={disabled}
                   onClick={() => handlePresetSelect(type)}
                   className={`p-2 rounded-xl text-xs font-medium border transition-all flex flex-col items-center justify-center gap-1 ${
                     active
                       ? 'bg-[#D4AF37]/10 border-[#D4AF37] text-[#D4AF37] shadow-[0_0_15px_rgba(212,175,55,0.05)]'
                       : 'bg-white/5 border-white/5 text-zinc-400 hover:bg-white/10 hover:text-white'
-                  }`}
+                  } ${disabled ? 'cursor-not-allowed opacity-80' : ''}`}
                   id={`preset-btn-${type}`}
                 >
                   <span className="font-sans font-semibold">{label}</span>
@@ -100,9 +111,10 @@ export default function TuningPanel({ setting, onChange }: TuningPanelProps) {
             min="0.1"
             max="3.0"
             step="0.1"
+            disabled={disabled}
             value={setting.coefficient}
             onChange={handleSliderChange}
-            className="w-full h-1.5 bg-zinc-800 rounded-lg cursor-pointer accent-[#D4AF37]"
+            className="w-full h-1.5 bg-zinc-800 rounded-lg cursor-pointer accent-[#D4AF37] disabled:opacity-50 disabled:cursor-not-allowed"
             id="multiplier-slider"
           />
           <div className="flex justify-between text-[9px] text-zinc-500 font-mono">

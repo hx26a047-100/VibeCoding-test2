@@ -32,6 +32,15 @@ export default function Leaderboard({
     }
   }, [duration]);
 
+  const isRegistering = currentScore !== undefined && currentScore > 0 && !hasSubmitted;
+
+  // Force active tab to match play duration during registering to prevent cross-submission
+  useEffect(() => {
+    if (isRegistering && duration) {
+      setActiveTab(duration);
+    }
+  }, [isRegistering, duration]);
+
   // Load all scores once
   useEffect(() => {
     const loadedScores = localStorage.getItem('match3_highscores');
@@ -111,7 +120,7 @@ export default function Leaderboard({
           <Trophy className="w-5 h-5 text-[#D4AF37] animate-pulse" />
           High Scores
         </h3>
-        {displayScores.length > 0 && (
+        {displayScores.length > 0 && !isRegistering && (
           <button
             onClick={clearLeaderboard}
             className="text-zinc-500 hover:text-red-400 transition-colors p-1 rounded-md"
@@ -125,24 +134,35 @@ export default function Leaderboard({
 
       {/* Tabs Selector */}
       <div className="flex gap-1.5 p-1 bg-black/40 rounded-xl border border-white/5" id="leaderboard-tabs">
-        {modes.map((m) => (
-          <button
-            key={m.value}
-            type="button"
-            onClick={() => {
-              audio.playSelect();
-              setActiveTab(m.value);
-            }}
-            className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-center ${
-              activeTab === m.value
-                ? 'bg-[#D4AF37] text-black shadow-md font-sans'
-                : 'text-zinc-400 hover:text-white hover:bg-white/5 font-sans'
-            }`}
-            id={`tab-btn-${m.value}`}
-          >
-            {m.label.split(' ')[0]} {/* Show クイック, ノーマル, ロング directly for space */}
-          </button>
-        ))}
+        {modes.map((m) => {
+          const isSelected = activeTab === m.value;
+          const isDisabled = isRegistering && m.value !== (duration || 60);
+
+          return (
+            <button
+              key={m.value}
+              type="button"
+              disabled={isDisabled || isRegistering}
+              onClick={() => {
+                if (isRegistering) return;
+                audio.playSelect();
+                setActiveTab(m.value);
+              }}
+              className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-center ${
+                isSelected
+                  ? 'bg-[#D4AF37] text-black shadow-md font-sans'
+                  : 'text-zinc-400 font-sans'
+              } ${
+                isDisabled
+                  ? 'opacity-20 cursor-not-allowed'
+                  : !isSelected ? 'hover:text-white hover:bg-white/5' : ''
+              }`}
+              id={`tab-btn-${m.value}`}
+            >
+              {m.label.split(' ')[0]} {/* Show クイック, ノーマル, ロング directly for space */}
+            </button>
+          );
+        })}
       </div>
 
       {currentScore !== undefined && currentScore > 0 && !hasSubmitted && (

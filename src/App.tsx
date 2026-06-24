@@ -606,9 +606,9 @@ export default function App() {
               <div className="space-y-2 landscape:space-y-1.5 lg:landscape:space-y-2">
                 <div className="flex items-center justify-between text-xs text-zinc-300 px-1">
                   <span>倍率設定: <strong className="text-[#D4AF37] font-display italic font-semibold">{getMultiplierLabel(multiplierSetting.type)}</strong></span>
-                  <span className="text-[10px] text-zinc-500 font-mono landscape:hidden sm:landscape:block lg:landscape:block">※ リアルタイム調整可</span>
+                  <span className="text-[10px] text-red-400 font-mono landscape:hidden sm:landscape:block lg:landscape:block">※ プレイ中は変更できません</span>
                 </div>
-                <TuningPanel setting={multiplierSetting} onChange={setMultiplierSetting} />
+                <TuningPanel setting={multiplierSetting} onChange={setMultiplierSetting} disabled={true} />
               </div>
 
             </div>
